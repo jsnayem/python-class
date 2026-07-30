@@ -1,0 +1,18 @@
+# Local state / artifacts
+progress.json
+savegame.json
+save.txt
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.venv*/
+.DS_Store
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+Thumbs.db
