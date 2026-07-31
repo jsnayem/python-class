@@ -1,10 +1,13 @@
-"""Lesson 38: Combat System - Attack
+"""
+
+Lesson 38: Combat System - Attack
 =====================================
 
 Step 1: Create attack(hero, monster)
 Step 2: Use weapon bonus or 1
 Step 3: Call monster.take_damage(damage)
 Step 4: Test your code
-  Run: python run_lesson.py 38"""
+  Run: python run_lesson.py 38
+"""
 
-# student code here
+# TODO: Write your code for Lesson 38 below this line.

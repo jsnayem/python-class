@@ -1,10 +1,13 @@
-"""Lesson 48: Objectives
+"""
+
+Lesson 48: Objectives
 ======================
 
 Step 1: Create objectives list of tuples
 Step 2: show_objectives(objectives)
 Step 3: Show checked/unchecked tasks
 Step 4: Test your code
-  Run: python run_lesson.py 48"""
+  Run: python run_lesson.py 48
+"""
 
-# student code here
+# TODO: Write your code for Lesson 48 below this line.

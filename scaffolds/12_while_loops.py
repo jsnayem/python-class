@@ -1,4 +1,6 @@
-"""Lesson 12: Multiple Parameters
+"""
+
+Lesson 12: Multiple Parameters
 ================================
 
 Step 1: Write greet(name, greeting="Hello")
@@ -6,6 +8,7 @@ Step 1: Write greet(name, greeting="Hello")
 Step 2: Call with one arg and with both args
 
 Step 4: Test your code
-  Run: python run_lesson.py 12"""
+  Run: python run_lesson.py 12
+"""
 
-# student code here
+# TODO: Write your code for Lesson 12 below this line.

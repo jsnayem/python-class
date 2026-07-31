@@ -1,10 +1,13 @@
-"""Lesson 46: Color System
+"""
+
+Lesson 46: Color System
 =========================
 
 Step 1: class Color with escape-code constants
 Step 2: colorize(text, color)
 Step 3: Print a colored message
 Step 4: Test your code
-  Run: python run_lesson.py 46"""
+  Run: python run_lesson.py 46
+"""
 
-# student code here
+# TODO: Write your code for Lesson 46 below this line.
