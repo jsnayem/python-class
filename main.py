@@ -367,32 +367,32 @@ SHOP_ITEMS = {
 }
 
 # World map: locations with descriptions and possible monsters.
-# Note: random.choice() runs at module load time (once), so forest/cave
-# monster assignments are fixed for the entire session. This is intentional
-# for reproducibility; if you want per-game randomization, move the
-# random.choice() calls into a function that runs at game start.
-WORLD = {
-    "town": {
-        "desc": "You are in a safe village. There's a shop and a well.",
-        "monster": None,
-        "exits": {"north": "forest", "east": "cave"},
-    },
-    "forest": {
-        "desc": "Dense, dark woods. You hear rustling.",
-        "monster": random.choice(["goblin", "orc"]),
-        "exits": {"south": "town", "east": "dungeon"},
-    },
-    "cave": {
-        "desc": "A damp, echoing cavern. Stalactites drip water.",
-        "monster": random.choice(["orc", "troll"]),
-        "exits": {"west": "town", "north": "dungeon"},
-    },
-    "dungeon": {
-        "desc": "The lair of the Dragon! The air is hot and smoky.",
-        "monster": "dragon",
-        "exits": {"south": "forest", "west": "cave"},
-    },
-}
+# Built fresh by new_game() so monster assignments vary each playthrough
+# (random.choice runs at game start, not at import time).
+def new_game():
+    """Create a fresh WORLD map with randomized monster encounters."""
+    return {
+        "town": {
+            "desc": "You are in a safe village. There's a shop and a well.",
+            "monster": None,
+            "exits": {"north": "forest", "east": "cave"},
+        },
+        "forest": {
+            "desc": "Dense, dark woods. You hear rustling.",
+            "monster": random.choice(["goblin", "orc"]),
+            "exits": {"south": "town", "east": "dungeon"},
+        },
+        "cave": {
+            "desc": "A damp, echoing cavern. Stalactites drip water.",
+            "monster": random.choice(["orc", "troll"]),
+            "exits": {"west": "town", "north": "dungeon"},
+        },
+        "dungeon": {
+            "desc": "The lair of the Dragon! The air is hot and smoky.",
+            "monster": "dragon",
+            "exits": {"south": "forest", "west": "cave"},
+        },
+    }
 
 
 # ============================
@@ -516,7 +516,6 @@ def combat(hero: Hero, monster: Monster) -> str:
     if not hero.is_alive():
         print_error(f"\n💀 You have been slain by the {monster.name}...")
         return "defeat"
-    return "defeat"  # should not reach here
 
 
 def shop(hero: Hero) -> None:
@@ -710,6 +709,7 @@ def main() -> None:
     current_location = "town"
     game_over = False
     quit_game = False
+    WORLD = new_game()
 
     # ===== MAIN GAME LOOP =====
     while not game_over and hero.is_alive() and not quit_game:
