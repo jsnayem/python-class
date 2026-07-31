@@ -3,10 +3,12 @@
 Lesson Runner for the 50-Lesson Python Adventure Game Curriculum.
 
 Usage:
-    python run_lesson.py           # Interactive menu
-    python run_lesson.py --all     # Run all tests
-    python run_lesson.py --progress  # Show progress
-    python run_lesson.py --reset   # Reset progress and lesson files
+    python run_lesson.py               # Interactive menu
+    python run_lesson.py --all         # Run all tests
+    python run_lesson.py --progress    # Show progress
+    python run_lesson.py --reset       # Reset progress and lesson files (prompts)
+    python run_lesson.py --reset --yes # Reset without prompting
+    python run_lesson.py 31            # Run a single lesson
 """
 
 import json
@@ -303,8 +305,27 @@ def show_progress():
 
 
 def reset_progress(yes=False):
-    """Reset progress and restore lesson files from scaffold templates."""
+    """Reset progress and restore lesson files from scaffold templates.
+
+    Guards: refuses to reset if any scaffold file fails to compile, so a
+    corrupt template can never be copied into lessons/ and leave the
+    student stuck.
+    """
     import shutil
+
+    # Guard: never reset if a scaffold is broken (would corrupt lessons/).
+    broken = []
+    for sc in sorted(SCAFFOLDS_DIR.glob("*.py")):
+        try:
+            compile(sc.read_text(), str(sc), "exec")
+        except SyntaxError as e:
+            broken.append(f"{sc.name}: {e}")
+    if broken:
+        print_error("Refusing to reset: scaffold files are broken:")
+        for b in broken:
+            print_error(b)
+        print_warning("Fix the files in scaffolds/ before resetting.")
+        return
 
     if not yes:
         print_warning("This will reset all progress and lesson files.")
@@ -464,26 +485,36 @@ def interactive_loop():
 
 def main():
     """Main entry point."""
+    # Tests and lessons reference paths relative to this script, so make the
+    # repo root the working directory regardless of where it is invoked from.
+    os.chdir(BASE_DIR)
+
     if len(sys.argv) < 2:
         interactive_loop()
         return
 
-    arg = sys.argv[1]
+    args = sys.argv[1:]
+    force = "--yes" in args or "--force" in args
 
-    if arg == "--all":
+    if "--all" in args:
         run_all_tests()
-    elif arg == "--progress":
+    elif "--progress" in args:
         show_progress()
-    elif arg == "--reset":
-        reset_progress()
-    elif arg == "--help" or arg == "-h":
+    elif "--reset" in args:
+        reset_progress(yes=force)
+    elif "--help" in args or "-h" in args:
         print(__doc__)
     else:
+        # Remaining token is a lesson number.
+        token = next((a for a in args if not a.startswith("--")), None)
+        if token is None:
+            print_error("Invalid arguments. Run with --help for usage.")
+            return
         try:
-            lesson_num = int(arg)
+            lesson_num = int(token)
             run_lesson(lesson_num)
         except ValueError:
-            print_error(f"Invalid argument: {arg}")
+            print_error(f"Invalid argument: {token}")
             print("Usage: python run_lesson.py <lesson_number>")
 
 
