@@ -1,5 +1,7 @@
 """Tests for Lesson 7: Lists"""
 
+from _helpers import safe_stdin
+
 
 def test_scaffold_has_no_answer():
     # The scaffold for this lesson must be a blank starter template
@@ -10,7 +12,7 @@ def test_scaffold_has_no_answer():
 
 def test_list_created():
     namespace = {}
-    with open("lessons/07_lists.py", "r") as f:
+    with open("lessons/07_lists.py", "r") as f, safe_stdin():
         exec(f.read(), namespace)
     assert "inventory" in namespace
 

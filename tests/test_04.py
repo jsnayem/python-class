@@ -2,10 +2,12 @@
 import io
 from contextlib import redirect_stdout
 
+from _helpers import safe_stdin
+
 
 def test_damage_calculation():
     f = io.StringIO()
-    with redirect_stdout(f):
+    with safe_stdin(), redirect_stdout(f):
         exec(open("lessons/04_math.py").read())
     output = f.getvalue()
     assert "8" in output

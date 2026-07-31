@@ -2,10 +2,12 @@
 import io
 from contextlib import redirect_stdout
 
+from _helpers import safe_stdin
+
 
 def test_has_title_border():
     f = io.StringIO()
-    with redirect_stdout(f):
+    with safe_stdin(), redirect_stdout(f):
         exec(open("lessons/03_printing.py").read())
     output = f.getvalue()
     assert "=" in output
@@ -13,7 +15,7 @@ def test_has_title_border():
 
 def test_prints_hero_status():
     f = io.StringIO()
-    with redirect_stdout(f):
+    with safe_stdin(), redirect_stdout(f):
         exec(open("lessons/03_printing.py").read())
     output = f.getvalue()
     assert "HERO" in output.upper()

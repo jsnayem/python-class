@@ -2,6 +2,8 @@
 import io
 from contextlib import redirect_stdout
 
+from _helpers import safe_stdin
+
 
 def test_scaffold_has_no_answer():
     # The scaffold for this lesson must be a blank starter template
@@ -26,7 +28,7 @@ def test_gold_increases():
     # Execute the student code and verify the gold actually increased to 70
     # (50 starting gold + 20), rather than matching a brittle label string.
     ns: dict = {}
-    with redirect_stdout(io.StringIO()):
+    with safe_stdin(), redirect_stdout(io.StringIO()):
         exec(compile(content, "lessons/02_variables.py", "exec"), ns)
     assert ns.get("hero_gold") == 70, (
         f"hero_gold should be 70 after adding 20 to 50, "

@@ -2,10 +2,12 @@
 import io
 from contextlib import redirect_stdout
 
+from _helpers import safe_stdin
+
 
 def test_low_health_warning():
     f = io.StringIO()
-    with redirect_stdout(f):
+    with safe_stdin(), redirect_stdout(f):
         exec(open("lessons/08_if_statements.py").read())
     output = f.getvalue()
     assert "health" in output.lower() or "warning" in output.lower()
@@ -13,7 +15,7 @@ def test_low_health_warning():
 
 def test_wealthy_message():
     f = io.StringIO()
-    with redirect_stdout(f):
+    with safe_stdin(), redirect_stdout(f):
         exec(open("lessons/08_if_statements.py").read())
     output = f.getvalue()
     assert "gold" in output.lower() or "rich" in output.lower()
@@ -21,7 +23,7 @@ def test_wealthy_message():
 
 def test_combined_condition():
     f = io.StringIO()
-    with redirect_stdout(f):
+    with safe_stdin(), redirect_stdout(f):
         exec(open("lessons/08_if_statements.py").read())
     output = f.getvalue()
     assert output.strip() != ""
