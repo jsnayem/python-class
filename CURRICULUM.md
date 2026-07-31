@@ -16,9 +16,9 @@ python-class/
 │   ├── 05_strings.py
 │   ├── 06_input.py
 │   ├── 07_if_statements.py
-│   ├── 08_comparisons.py
-│   ├── 09_lists_intro.py
-│   ├── 10_list_methods.py
+│   ├── 08_if_statements.py
+│   ├── 09_lists.py
+│   ├── 10_functions.py
 │   ├── 11_loops_intro.py
 │   ├── 12_while_loops.py
 │   ├── 13_for_loops.py
