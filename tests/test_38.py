@@ -1,20 +1,37 @@
-"""Tests for Lesson 38: Combat System"""
+"""Tests for Lesson 38: Attack."""
 from pathlib import Path
 
+from _helpers import load_answer, lesson_text
 
-def test_file_exists():
-    lesson_files = sorted(Path("lessons").glob("38_*.py"))
-    assert lesson_files, "Lesson 38 file should exist"
-
-
-def test_has_function():
-    text = (Path("lessons") / next(Path("lessons").glob("38_*.py")).name).read_text()
-    assert "def " in text
+ROOT = Path(__file__).parent.parent
 
 
-def test_is_valid_python():
-    text = (Path("lessons") / next(Path("lessons").glob("38_*.py")).name).read_text()
-    try:
-        compile(text, "lessons/38_combat_system.py", "exec")
-    except SyntaxError as e:
-        raise AssertionError(f"Invalid Python syntax: {e}")
+def test_student_file_present():
+    assert list((ROOT / "lessons").glob("38_*.py")), "Lesson 38 file should exist"
+
+
+def test_student_has_attack_function():
+    assert "def attack" in lesson_text(38)
+
+
+def test_answer_attack_damages_monster():
+    m = load_answer("38_combat_system")
+
+    class FakeHero:
+        weapon: object = None
+
+    class FakeWeapon:
+        attack_bonus = 5
+
+    class FakeMonster:
+        health = 30
+
+        def take_damage(self, d):
+            self.health -= d
+
+    hero = FakeHero()
+    hero.weapon = FakeWeapon()
+    monster = FakeMonster()
+    dmg = m.attack(hero, monster)
+    assert dmg == 5
+    assert monster.health == 25

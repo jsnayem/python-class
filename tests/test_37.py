@@ -1,20 +1,21 @@
-"""Tests for Lesson 37: Monster Class"""
+"""Tests for Lesson 37: Monster Class."""
 from pathlib import Path
 
+from _helpers import load_answer
 
-def test_file_exists():
-    lesson_files = sorted(Path("lessons").glob("37_*.py"))
-    assert lesson_files, "Lesson 37 file should exist"
-
-
-def test_has_monster_class():
-    text = (Path("lessons") / next(Path("lessons").glob("37_*.py")).name).read_text()
-    assert "class " in text
+ROOT = Path(__file__).parent.parent
 
 
-def test_is_valid_python():
-    text = (Path("lessons") / next(Path("lessons").glob("37_*.py")).name).read_text()
-    try:
-        compile(text, "lessons/37_monster_class.py", "exec")
-    except SyntaxError as e:
-        raise AssertionError(f"Invalid Python syntax: {e}")
+def test_student_file_present():
+    assert list((ROOT / "lessons").glob("37_*.py")), "Lesson 37 file should exist"
+
+
+def test_answer_monster_is_alive_and_takes_damage():
+    m = load_answer("37_monster_class")
+    goblin = m.Monster("Goblin", 30, 8, 15)
+    assert goblin.is_alive() is True
+    goblin.take_damage(10)
+    assert goblin.health == 20
+    goblin.take_damage(999)
+    assert goblin.health == 0
+    assert goblin.is_alive() is False

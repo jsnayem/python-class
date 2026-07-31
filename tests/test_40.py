@@ -1,20 +1,22 @@
-"""Tests for Lesson 40: Flee Mechanic"""
+"""Tests for Lesson 40: Flee Mechanic."""
 from pathlib import Path
 
+from _helpers import load_answer, lesson_text
 
-def test_file_exists():
-    lesson_files = sorted(Path("lessons").glob("40_*.py"))
-    assert lesson_files, "Lesson 40 file should exist"
-
-
-def test_has_flee():
-    text = (Path("lessons") / next(Path("lessons").glob("40_*.py")).name).read_text()
-    assert "flee" in text.lower()
+ROOT = Path(__file__).parent.parent
 
 
-def test_is_valid_python():
-    text = (Path("lessons") / next(Path("lessons").glob("40_*.py")).name).read_text()
-    try:
-        compile(text, "lessons/40_flee_mechanic.py", "exec")
-    except SyntaxError as e:
-        raise AssertionError(f"Invalid Python syntax: {e}")
+def test_student_file_present():
+    assert list((ROOT / "lessons").glob("40_*.py")), "Lesson 40 file should exist"
+
+
+def test_student_has_flee_function():
+    assert "def flee" in lesson_text(40)
+
+
+def test_answer_flee_bounds():
+    m = load_answer("40_flee_mechanic")
+    assert m.flee(chance=1.0) is True
+    assert m.flee(chance=0.0) is False
+    for _ in range(50):
+        assert m.flee() in (True, False)

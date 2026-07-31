@@ -1,20 +1,23 @@
-"""Tests for Lesson 32: Hero Stats"""
+"""Tests for Lesson 32: Hero Stats (Starting Bonuses)."""
 from pathlib import Path
 
+from _helpers import load_answer, lesson_text
 
-def test_file_exists():
-    lesson_files = sorted(Path("lessons").glob("32_*.py"))
-    assert lesson_files, "Lesson 32 file should exist"
-
-
-def test_has_is_alive():
-    text = (Path("lessons") / next(Path("lessons").glob("32_*.py")).name).read_text()
-    assert "is_alive" in text
+ROOT = Path(__file__).parent.parent
 
 
-def test_is_valid_python():
-    text = (Path("lessons") / next(Path("lessons").glob("32_*.py")).name).read_text()
-    try:
-        compile(text, "lessons/32_hero_stats.py", "exec")
-    except SyntaxError as e:
-        raise AssertionError(f"Invalid Python syntax: {e}")
+def test_student_file_present():
+    assert list((ROOT / "lessons").glob("32_*.py")), "Lesson 32 file should exist"
+
+
+def test_student_has_is_alive():
+    assert "is_alive" in lesson_text(32)
+
+
+def test_answer_hero_stats():
+    m = load_answer("32_hero_stats")
+    hero = m.Hero("Alex")
+    assert hero.max_health == 100 and hero.health == 100
+    assert hero.is_alive() is True
+    hero.health = 0
+    assert hero.is_alive() is False

@@ -1,20 +1,23 @@
-"""Tests for Lesson 33: Hero Inventory"""
+"""Tests for Lesson 33: Hero Inventory."""
 from pathlib import Path
 
+from _helpers import load_answer, lesson_text
 
-def test_file_exists():
-    lesson_files = sorted(Path("lessons").glob("33_*.py"))
-    assert lesson_files, "Lesson 33 file should exist"
-
-
-def test_has_inventory():
-    text = (Path("lessons") / next(Path("lessons").glob("33_*.py")).name).read_text()
-    assert "inventory" in text
+ROOT = Path(__file__).parent.parent
 
 
-def test_is_valid_python():
-    text = (Path("lessons") / next(Path("lessons").glob("33_*.py")).name).read_text()
-    try:
-        compile(text, "lessons/33_hero_inventory.py", "exec")
-    except SyntaxError as e:
-        raise AssertionError(f"Invalid Python syntax: {e}")
+def test_student_file_present():
+    assert list((ROOT / "lessons").glob("33_*.py")), "Lesson 33 file should exist"
+
+
+def test_student_has_add_item():
+    assert "add_item" in lesson_text(33)
+
+
+def test_answer_inventory_add_drop():
+    m = load_answer("33_hero_inventory")
+    hero = m.Hero("Alex")
+    hero.add_item("sword")
+    assert "sword" in hero.inventory
+    hero.drop_item("sword")
+    assert "sword" not in hero.inventory

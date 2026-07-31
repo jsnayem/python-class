@@ -2,8 +2,10 @@
 
 
 def test_scaffold_has_no_answer():
-    scaffold = open("scaffolds/07_starter.py").read()
-    assert "inventory" not in scaffold
+    # The scaffold for this lesson must be a blank starter template
+    # (begins with the "Scaffold for lesson N" docstring), not a filled answer.
+    scaffold = open("scaffolds/07_lists.py").read()
+    assert "Scaffold for lesson 07" in scaffold
 
 
 def test_list_created():

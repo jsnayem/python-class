@@ -1,20 +1,21 @@
-"""Tests for Lesson 34: Item Class"""
+"""Tests for Lesson 34: Item Class (Base)."""
 from pathlib import Path
 
+from _helpers import load_answer, lesson_text
 
-def test_file_exists():
-    lesson_files = sorted(Path("lessons").glob("34_*.py"))
-    assert lesson_files, "Lesson 34 file should exist"
-
-
-def test_has_item_class():
-    text = (Path("lessons") / next(Path("lessons").glob("34_*.py")).name).read_text()
-    assert "class Item" in text
+ROOT = Path(__file__).parent.parent
 
 
-def test_is_valid_python():
-    text = (Path("lessons") / next(Path("lessons").glob("34_*.py")).name).read_text()
-    try:
-        compile(text, "lessons/34_item_class.py", "exec")
-    except SyntaxError as e:
-        raise AssertionError(f"Invalid Python syntax: {e}")
+def test_student_file_present():
+    assert list((ROOT / "lessons").glob("34_*.py")), "Lesson 34 file should exist"
+
+
+def test_student_has_item_class():
+    assert "class Item" in lesson_text(34)
+
+
+def test_answer_item_attributes():
+    m = load_answer("34_item_class")
+    item = m.Item("Ring", "A shiny ring", 25)
+    assert item.name == "Ring"
+    assert item.value == 25

@@ -1,20 +1,18 @@
-"""Tests for Lesson 35: Weapon Class"""
+"""Tests for Lesson 35: Weapon and Potion (subclasses of Item)."""
 from pathlib import Path
 
+from _helpers import load_answer
 
-def test_file_exists():
-    lesson_files = sorted(Path("lessons").glob("35_*.py"))
-    assert lesson_files, "Lesson 35 file should exist"
-
-
-def test_has_weapon_class():
-    text = (Path("lessons") / next(Path("lessons").glob("35_*.py")).name).read_text()
-    assert "class " in text
+ROOT = Path(__file__).parent.parent
 
 
-def test_is_valid_python():
-    text = (Path("lessons") / next(Path("lessons").glob("35_*.py")).name).read_text()
-    try:
-        compile(text, "lessons/35_weapon_class.py", "exec")
-    except SyntaxError as e:
-        raise AssertionError(f"Invalid Python syntax: {e}")
+def test_student_file_present():
+    assert list((ROOT / "lessons").glob("35_*.py")), "Lesson 35 file should exist"
+
+
+def test_answer_subclasses_inherit_item():
+    m = load_answer("35_weapon_class")
+    w = m.Weapon("Sword", "A blade", 50, 5)
+    p = m.Potion("Health", "Heals", 20, 30)
+    assert isinstance(w, m.Item) and isinstance(p, m.Item)
+    assert w.attack_bonus == 5 and p.heal_amount == 30

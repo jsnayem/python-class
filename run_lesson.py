@@ -13,6 +13,7 @@ Usage:
 
 import json
 import os
+import re
 import sys
 import time
 import traceback
@@ -123,27 +124,57 @@ def print_badge(badge_info):
     print(f"\n  🎉 BADGE EARNED: {badge_info['emoji']} {badge_info['name']}")
 
 
+def _check_lesson_compiles(lesson_num):
+    """Return True if the lesson's source file compiles (or is absent)."""
+    lesson_files = list(LESSONS_DIR.glob(f"{lesson_num:02d}_*.py"))
+    if not lesson_files:
+        return True
+    lesson_path = lesson_files[0]
+    try:
+        with open(lesson_path, "r") as f:
+            compile(f.read(), str(lesson_path), "exec")
+    except SyntaxError as e:
+        print_error(f"Lesson {lesson_num} has syntax error: {e}")
+        return False
+    return True
+
+
 def run_lesson_tests(lesson_num):
-    """Run tests for a specific lesson."""
+    """Run tests for a specific lesson.
+
+    Resolves the lesson's numbered test file and delegates to
+    run_lesson_tests_from_file so any test_*.py is supported uniformly.
+    """
     test_file = TESTS_DIR / f"test_{lesson_num:02d}.py"
+    return run_lesson_tests_from_file(test_file, label=f"Lesson {lesson_num}")
+
+
+def run_lesson_tests_from_file(test_file, label=None):
+    """Run every test_* function in the given test module file.
+
+    Each test file is loaded by path (so names like test_capstone_game.py
+    work), executed, and its test_* functions are run with friendly output.
+    """
+    label = label or test_file.stem
     if not test_file.exists():
-        print_hint(f"No tests found for lesson {lesson_num}.")
+        print_hint(f"No tests found for {label}.")
         return True
 
-    # First, check the lesson file is syntactically valid
-    lesson_files = list(LESSONS_DIR.glob(f"{lesson_num:02d}_*.py"))
-    if lesson_files:
-        lesson_path = lesson_files[0]
-        try:
-            with open(lesson_path, "r") as f:
-                compile(f.read(), lesson_path, "exec")
-        except SyntaxError as e:
-            print_error(f"Lesson {lesson_num} has syntax error: {e}")
-            return False
+    # If this test file belongs to a numbered lesson, check that lesson's
+    # source file compiles before running (catches broken student code).
+    stem = test_file.stem
+    m = re.match(r"^test_(\d{2})$", stem)
+    if m and not _check_lesson_compiles(int(m.group(1))):
+        return False
+
+    # Make the tests/ directory importable so shared helpers (e.g. _helpers)
+    # resolve regardless of the current working directory.
+    if str(TESTS_DIR) not in sys.path:
+        sys.path.insert(0, str(TESTS_DIR))
 
     # Import the test module
     import importlib.util
-    spec = importlib.util.spec_from_file_location(f"test_{lesson_num:02d}", test_file)
+    spec = importlib.util.spec_from_file_location(stem, test_file)
     test_module = importlib.util.module_from_spec(spec)
 
     # Don't execute lesson code (it may have input() calls)
@@ -365,20 +396,19 @@ def reset_progress(yes=False):
     print("Starting fresh from lesson 1!")
 
 def run_all_tests():
-    """Run all lesson tests."""
+    """Run all lesson tests. Returns True if every suite passed."""
     print_header("Running All Tests", "🧪")
 
-    progress = load_progress()
     all_passed = True
 
-    for lesson_num in range(1, TOTAL_LESSONS + 1):
-        test_file = TESTS_DIR / f"test_{lesson_num:02d}.py"
+    # Discover every test_*.py so new suites (e.g. test_capstone_game) run too.
+    test_files = sorted(TESTS_DIR.glob("test_*.py"))
+    for test_file in test_files:
         if not test_file.exists():
-            print_hint(f"Lesson {lesson_num}: No test file found")
             continue
 
-        print(f"\n  Lesson {lesson_num}:")
-        success = run_lesson_tests(lesson_num)
+        print(f"\n  {test_file.stem}:")
+        success = run_lesson_tests_from_file(test_file)
         if not success:
             all_passed = False
 
@@ -386,6 +416,7 @@ def run_all_tests():
         print_success("\nAll tests passed! 🎉")
     else:
         print_error("\nSome tests failed. Review the output above.")
+    return all_passed
 
 
 def interactive_loop():
@@ -497,7 +528,8 @@ def main():
     force = "--yes" in args or "--force" in args
 
     if "--all" in args:
-        run_all_tests()
+        ok = run_all_tests()
+        sys.exit(0 if ok else 1)
     elif "--progress" in args:
         show_progress()
     elif "--reset" in args:

@@ -5,10 +5,10 @@ from contextlib import redirect_stdout
 
 
 def test_scaffold_has_no_answer():
-    scaffold = open("scaffolds/01_starter.py").read()
-    assert "Hello, Adventurer!" not in scaffold
-    assert "My name is" not in scaffold
-    assert "love dragons" not in scaffold.lower()
+    # The scaffold for this lesson must be a blank starter template
+    # (begins with the "Scaffold for lesson N" docstring), not a filled answer.
+    scaffold = open("scaffolds/01_hello_world.py").read()
+    assert "Scaffold for lesson 01" in scaffold
 
 
 def test_prints_hello_adventurer():

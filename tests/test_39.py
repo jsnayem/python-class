@@ -1,20 +1,28 @@
-"""Tests for Lesson 39: Attack Logic"""
+"""Tests for Lesson 39: Combat Loop (damage formula)."""
 from pathlib import Path
 
+from _helpers import load_answer, lesson_text
 
-def test_file_exists():
-    lesson_files = sorted(Path("lessons").glob("39_*.py"))
-    assert lesson_files, "Lesson 39 file should exist"
-
-
-def test_has_function():
-    text = (Path("lessons") / next(Path("lessons").glob("39_*.py")).name).read_text()
-    assert "def " in text
+ROOT = Path(__file__).parent.parent
 
 
-def test_is_valid_python():
-    text = (Path("lessons") / next(Path("lessons").glob("39_*.py")).name).read_text()
-    try:
-        compile(text, "lessons/39_attack_logic.py", "exec")
-    except SyntaxError as e:
-        raise AssertionError(f"Invalid Python syntax: {e}")
+def test_student_file_present():
+    assert list((ROOT / "lessons").glob("39_*.py")), "Lesson 39 file should exist"
+
+
+def test_student_has_calculate_damage():
+    assert "calculate_damage" in lesson_text(39)
+
+
+def test_answer_damage_minimum_one():
+    m = load_answer("39_attack_logic")
+
+    class Fighter:
+        attack_power = 10
+        defense = 0
+
+    weak = Fighter()
+    weak.attack_power = 3
+    weak.defense = 10
+    assert m.calculate_damage(weak, weak) == 1  # never less than 1
+    assert m.calculate_damage(Fighter(), Fighter()) == 10

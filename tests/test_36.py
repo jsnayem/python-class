@@ -1,20 +1,17 @@
-"""Tests for Lesson 36: Potion Class"""
+"""Tests for Lesson 36: Potion Class."""
 from pathlib import Path
 
+from _helpers import load_answer
 
-def test_file_exists():
-    lesson_files = sorted(Path("lessons").glob("36_*.py"))
-    assert lesson_files, "Lesson 36 file should exist"
-
-
-def test_has_potion_class():
-    text = (Path("lessons") / next(Path("lessons").glob("36_*.py")).name).read_text()
-    assert "class " in text
+ROOT = Path(__file__).parent.parent
 
 
-def test_is_valid_python():
-    text = (Path("lessons") / next(Path("lessons").glob("36_*.py")).name).read_text()
-    try:
-        compile(text, "lessons/36_potion_class.py", "exec")
-    except SyntaxError as e:
-        raise AssertionError(f"Invalid Python syntax: {e}")
+def test_student_file_present():
+    assert list((ROOT / "lessons").glob("36_*.py")), "Lesson 36 file should exist"
+
+
+def test_answer_potion_heal_amount():
+    m = load_answer("36_potion_class")
+    potion = m.Potion("Health Potion", "Restores HP", 20, 30)
+    assert potion.heal_amount == 30
+    assert isinstance(potion, m.Item)

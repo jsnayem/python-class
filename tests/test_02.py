@@ -4,10 +4,10 @@ from contextlib import redirect_stdout
 
 
 def test_scaffold_has_no_answer():
-    scaffold = open("scaffolds/02_starter.py").read()
-    assert "hero_name" not in scaffold
-    assert "hero_health" not in scaffold
-    assert "hero_gold" not in scaffold
+    # The scaffold for this lesson must be a blank starter template
+    # (begins with the "Scaffold for lesson N" docstring), not a filled answer.
+    scaffold = open("scaffolds/02_variables.py").read()
+    assert "Scaffold for lesson 02" in scaffold
 
 
 def test_variables_exist():

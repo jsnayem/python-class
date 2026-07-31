@@ -1,20 +1,40 @@
-"""Tests for Lesson 23: Inheritance - Shop Items"""
+"""Tests for Lesson 23: Inheritance (Shop Items).
+
+Validates real subclass behavior against the answer_key/ reference.
+"""
+import importlib.util
 from pathlib import Path
 
-
-def test_file_exists():
-    lesson_files = sorted(Path("lessons").glob("23_*.py"))
-    assert lesson_files, "Lesson 23 file should exist"
+ROOT = Path(__file__).parent.parent
 
 
-def test_has_multiple_classes():
-    text = (Path("lessons") / next(Path("lessons").glob("23_*.py")).name).read_text()
-    assert text.count("class ") >= 2
+def _load_answer(modname):
+    spec = importlib.util.spec_from_file_location(
+        modname, ROOT / "answer_key" / f"{modname}.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
 
 
-def test_is_valid_python():
-    text = (Path("lessons") / next(Path("lessons").glob("23_*.py")).name).read_text()
-    try:
-        compile(text, "lessons/23_inheritance.py", "exec")
-    except SyntaxError as e:
-        raise AssertionError(f"Invalid Python syntax: {e}")
+def test_student_file_present():
+    assert list((ROOT / "lessons").glob("23_*.py")), "Lesson 23 file should exist"
+
+
+def test_student_uses_super():
+    text = (ROOT / "lessons" / next((ROOT / "lessons").glob("23_*.py")).name).read_text()
+    assert "super()" in text, "Subclasses should call super().__init__()"
+
+
+def test_answer_weapon_carries_bonus():
+    m = _load_answer("23_inheritance")
+    w = m.Weapon("Sword", 50, 5)
+    assert isinstance(w, m.Item)
+    assert w.name == "Sword" and w.price == 50 and w.bonus == 5
+
+
+def test_answer_potion_carries_amount():
+    m = _load_answer("23_inheritance")
+    p = m.Potion("Health", 20, 30)
+    assert isinstance(p, m.Item)
+    assert p.amount == 30
