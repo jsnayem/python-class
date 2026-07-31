@@ -2,7 +2,7 @@
 """
 Lesson Runner for the 50-Lesson Python Adventure Game Curriculum.
 
-FULLY INTERACTIVE — no command-line arguments. Just run it:
+FULLY INTERACTIVE by default — just run it:
 
     python run_lesson.py
 
@@ -15,8 +15,14 @@ and use the on-screen menu:
     i <num>  - Preview any lesson
     r        - Reset everything
     q        - Quit
+
+Non-interactive options:
+
+    python run_lesson.py --reset         Reset progress + lesson files (prompts)
+    python run_lesson.py --reset --yes   Reset without the confirmation prompt
 """
 
+import argparse
 import json
 import os
 import re
@@ -341,12 +347,16 @@ def show_progress():
     render_progress_bar(progress, label="Progress")
 
 
-def reset_progress():
+def reset_progress(force: bool = False):
     """Reset progress and restore lesson files from scaffold templates.
 
     Guards: refuses to reset if any scaffold file fails to compile, so a
     corrupt template can never be copied into lessons/ and leave the
     student stuck.
+
+    Args:
+        force: when True, skip the interactive confirmation prompt. Use the
+            CLI `--reset --yes` path; the interactive menu always prompts.
     """
     import shutil
 
@@ -364,11 +374,12 @@ def reset_progress():
         print_warning("Fix the files in scaffolds/ before resetting.")
         return
 
-    print_warning("This will reset all progress and lesson files.")
-    confirm = input("Are you sure? (y/n): ").strip().lower()
-    if confirm != "y":
-        print("Reset cancelled.")
-        return
+    if not force:
+        print_warning("This will reset all progress and lesson files.")
+        confirm = input("Are you sure? (y/n): ").strip().lower()
+        if confirm != "y":
+            print("Reset cancelled.")
+            return
 
     # Reset lesson files back to scaffold templates
     if SCAFFOLDS_DIR.exists():
@@ -539,12 +550,35 @@ def interactive_loop():
 
 
 def main():
-    """Main entry point — fully interactive, no command-line arguments.
+    """Main entry point.
+
+    With no arguments it launches the fully interactive menu. The --reset
+    option performs a non-interactive reset for scripting/CI use.
 
     Tests and lessons reference paths relative to this script, so make the
     repo root the working directory regardless of where it is invoked from.
     """
+    parser = argparse.ArgumentParser(
+        description="50-Lesson Python Adventure Game curriculum runner."
+    )
+    parser.add_argument(
+        "--reset",
+        action="store_true",
+        help="Reset all progress and lesson files to starter templates.",
+    )
+    parser.add_argument(
+        "--yes",
+        action="store_true",
+        help="Skip the confirmation prompt (use together with --reset).",
+    )
+    args = parser.parse_args()
+
     os.chdir(BASE_DIR)
+
+    if args.reset:
+        reset_progress(force=args.yes)
+        return
+
     interactive_loop()
 
 
