@@ -1,0 +1,1 @@
+"""Scaffold for lesson 18."""\n# student code here\n

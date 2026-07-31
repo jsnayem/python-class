@@ -1,0 +1,35 @@
+"""Tests for Lesson 7: Lists"""
+
+
+def test_scaffold_has_no_answer():
+    scaffold = open("scaffolds/07_starter.py").read()
+    assert "inventory" not in scaffold
+
+
+def test_list_created():
+    namespace = {}
+    with open("lessons/07_lists.py", "r") as f:
+        exec(f.read(), namespace)
+    assert "inventory" in namespace
+
+
+def test_uses_append():
+    with open("lessons/07_lists.py", "r") as f:
+        content = f.read()
+    assert ".append(" in content
+
+
+def test_uses_for_loop():
+    with open("lessons/07_lists.py", "r") as f:
+        content = f.read()
+    assert "for" in content
+    assert "enumerate" in content
+
+
+def test_is_valid_python():
+    with open("lessons/07_lists.py", "r") as f:
+        content = f.read()
+    try:
+        compile(content, "lessons/07_lists.py", "exec")
+    except SyntaxError as e:
+        raise AssertionError(f"Invalid Python syntax: {e}")
