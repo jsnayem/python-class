@@ -151,6 +151,40 @@ def _check_lesson_compiles(lesson_num):
     return True
 
 
+def _lesson_is_blank_scaffold(lesson_num):
+    """Return True if the lesson file is still the unfilled starter template.
+
+    After a reset the lesson file equals its scaffold: a shared instruction
+    docstring plus a TODO marker and no student code. Such a file must never
+    be counted as "completed" — its instruction docstring otherwise satisfies
+    the keyword checks and fakes progress. We strip the leading docstring and
+    confirm there is no real code beyond the scaffold TODO marker.
+    """
+    lesson_files = list(LESSONS_DIR.glob(f"{lesson_num:02d}_*.py"))
+    if not lesson_files:
+        return True  # no file at all -> nothing to complete
+    lesson_path = lesson_files[0]
+    try:
+        source = lesson_path.read_text()
+    except OSError:
+        return True
+
+    # Drop the leading module docstring (the shared instructions).
+    stripped = source.lstrip()
+    if stripped.startswith('"""'):
+        end = source.find('"""', 3)
+        if end != -1:
+            source = source[end + 3:]
+
+    # Ignore blank lines and the scaffold TODO marker; require real code.
+    meaningful = [
+        line
+        for line in source.splitlines()
+        if line.strip() and "TODO: Write your code for Lesson" not in line
+    ]
+    return len(meaningful) == 0
+
+
 def run_lesson_tests(lesson_num):
     """Run tests for a specific lesson.
 
@@ -284,6 +318,18 @@ def run_lesson(lesson_num):
 
     elapsed = (time.time() - start_time) / 60
     progress["total_time_minutes"] += elapsed
+
+    # Reset guard: a lesson file that is still the unfilled starter template
+    # must not be marked complete. Its shared instruction docstring would
+    # otherwise satisfy the keyword checks and fake progress, so a reset could
+    # march the student straight through every lesson without writing code.
+    if success and _lesson_is_blank_scaffold(lesson_num):
+        print_warning(
+            f"Lesson {lesson_num} is still the starter template — "
+            f"write your code in lessons/{lesson_num:02d}_*.py, then run it again."
+        )
+        save_progress(progress)
+        return
 
     if success:
         if lesson_num not in progress["completed"]:
