@@ -6,9 +6,9 @@ from contextlib import redirect_stdout
 
 def test_scaffold_has_no_answer():
     # The scaffold for this lesson must be a blank starter template
-    # (begins with the "Scaffold for lesson N" docstring), not a filled answer.
+    # (marked with a TODO line), not a filled answer.
     scaffold = open("scaffolds/01_hello_world.py").read()
-    assert "Scaffold for lesson 01" in scaffold
+    assert "TODO: Write your code for Lesson" in scaffold
 
 
 def test_prints_hello_adventurer():

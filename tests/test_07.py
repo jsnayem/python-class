@@ -3,9 +3,9 @@
 
 def test_scaffold_has_no_answer():
     # The scaffold for this lesson must be a blank starter template
-    # (begins with the "Scaffold for lesson N" docstring), not a filled answer.
+    # (marked with a TODO line), not a filled answer.
     scaffold = open("scaffolds/07_lists.py").read()
-    assert "Scaffold for lesson 07" in scaffold
+    assert "TODO: Write your code for Lesson" in scaffold
 
 
 def test_list_created():
