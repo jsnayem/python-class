@@ -2,13 +2,19 @@
 """
 Lesson Runner for the 50-Lesson Python Adventure Game Curriculum.
 
-Usage:
-    python run_lesson.py               # Interactive menu
-    python run_lesson.py --all         # Run all tests
-    python run_lesson.py --progress    # Show progress
-    python run_lesson.py --reset       # Reset progress and lesson files (prompts)
-    python run_lesson.py --reset --yes # Reset without prompting
-    python run_lesson.py 31            # Run a single lesson
+FULLY INTERACTIVE — no command-line arguments. Just run it:
+
+    python run_lesson.py
+
+and use the on-screen menu:
+
+    n        - Continue / retry current lesson
+    a        - Run ALL lesson tests
+    s        - Show progress
+    p <num>  - Open a completed lesson
+    i <num>  - Preview any lesson
+    r        - Reset everything
+    q        - Quit
 """
 
 import json
@@ -335,7 +341,7 @@ def show_progress():
     render_progress_bar(progress, label="Progress")
 
 
-def reset_progress(yes=False):
+def reset_progress():
     """Reset progress and restore lesson files from scaffold templates.
 
     Guards: refuses to reset if any scaffold file fails to compile, so a
@@ -358,12 +364,11 @@ def reset_progress(yes=False):
         print_warning("Fix the files in scaffolds/ before resetting.")
         return
 
-    if not yes:
-        print_warning("This will reset all progress and lesson files.")
-        confirm = input("Are you sure? (y/n): ").strip().lower()
-        if confirm != "y":
-            print("Reset cancelled.")
-            return
+    print_warning("This will reset all progress and lesson files.")
+    confirm = input("Are you sure? (y/n): ").strip().lower()
+    if confirm != "y":
+        print("Reset cancelled.")
+        return
 
     # Reset lesson files back to scaffold templates
     if SCAFFOLDS_DIR.exists():
@@ -420,7 +425,11 @@ def run_all_tests():
 
 
 def interactive_loop():
-    """Interactive menu: no args needed. Auto-opens current lesson, then shows navigation."""
+    """Interactive menu: the ONLY way to drive the runner. No CLI args.
+
+    Runs fully from the menu: continue/retry lesson, run all tests, show
+    progress, open completed lessons, preview any lesson, reset, or quit.
+    """
     while True:
         progress = load_progress()
         current = progress["current_lesson"]
@@ -454,18 +463,19 @@ def interactive_loop():
             print_success("All lessons completed! You are a Python Hero!")
             print_badge(BADGES["adventure_complete"])
         else:
-            print_header("Python Adventure Curriculum", "🎮")
+            print_header("Your Curriculum Menu", "🎮")
             render_progress_bar(progress, label="Progress")
 
-            print("\n  Menu:")
+        print("\n  Menu:")
+        print(f"    {Color.GREEN}  n{Color.RESET} - Continue / retry current lesson ({current})")
+        print(f"    {Color.CYAN}  a{Color.RESET} - Run ALL lesson tests")
+        print(f"    {Color.BLUE}  s{Color.RESET} - Show progress")
         completed_rev = sorted(completed, reverse=True)[:8]
         if completed_rev:
             print(f"    {Color.CYAN}  p <num>{Color.RESET} - Open completed lesson: {', '.join(str(x) for x in completed_rev)}")
-        if current <= TOTAL_LESSONS:
-            print(f"    {Color.GREEN}  n{Color.RESET} - Retry current lesson ({current})")
-        print(f"    {Color.BLUE}  i <num>{Color.RESET} - Preview any lesson")
-        print(f"    {Color.YELLOW}  r{Color.RESET} - Reset everything")
-        print(f"    {Color.MAGENTA}  q{Color.RESET} - Quit")
+        print(f"    {Color.YELLOW}  i <num>{Color.RESET} - Preview any lesson")
+        print(f"    {Color.MAGENTA}  r{Color.RESET} - Reset everything")
+        print(f"    {Color.RED}  q{Color.RESET} - Quit")
 
         try:
             choice = input("\nEnter choice: ").strip().lower()
@@ -477,8 +487,22 @@ def interactive_loop():
             print("Goodbye!")
             break
 
-        if choice == "n" and current <= TOTAL_LESSONS:
-            run_lesson(current)
+        if choice == "n":
+            if current <= TOTAL_LESSONS:
+                run_lesson(current)
+                input("Press Enter to continue...")
+            else:
+                print_error("All lessons are complete! Use 'i <num>' to preview.")
+                input("Press Enter to continue...")
+            continue
+
+        if choice == "a":
+            run_all_tests()
+            input("Press Enter to continue...")
+            continue
+
+        if choice == "s":
+            show_progress()
             input("Press Enter to continue...")
             continue
 
@@ -510,44 +534,18 @@ def interactive_loop():
             input("Press Enter to continue...")
             continue
 
-        print_error("Invalid option. Use n / p <num> / i <num> / r / q.")
+        print_error("Invalid option. Use n / a / s / p <num> / i <num> / r / q.")
         input("Press Enter to continue...")
 
 
 def main():
-    """Main entry point."""
-    # Tests and lessons reference paths relative to this script, so make the
-    # repo root the working directory regardless of where it is invoked from.
+    """Main entry point — fully interactive, no command-line arguments.
+
+    Tests and lessons reference paths relative to this script, so make the
+    repo root the working directory regardless of where it is invoked from.
+    """
     os.chdir(BASE_DIR)
-
-    if len(sys.argv) < 2:
-        interactive_loop()
-        return
-
-    args = sys.argv[1:]
-    force = "--yes" in args or "--force" in args
-
-    if "--all" in args:
-        ok = run_all_tests()
-        sys.exit(0 if ok else 1)
-    elif "--progress" in args:
-        show_progress()
-    elif "--reset" in args:
-        reset_progress(yes=force)
-    elif "--help" in args or "-h" in args:
-        print(__doc__)
-    else:
-        # Remaining token is a lesson number.
-        token = next((a for a in args if not a.startswith("--")), None)
-        if token is None:
-            print_error("Invalid arguments. Run with --help for usage.")
-            return
-        try:
-            lesson_num = int(token)
-            run_lesson(lesson_num)
-        except ValueError:
-            print_error(f"Invalid argument: {token}")
-            print("Usage: python run_lesson.py <lesson_number>")
+    interactive_loop()
 
 
 if __name__ == "__main__":

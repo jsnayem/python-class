@@ -7,10 +7,19 @@ This curriculum teaches Python programming by building a complete text-based RPG
 ## Quick Start
 
 ```bash
-python run_lesson.py 1
-python run_lesson.py --progress
-python run_lesson.py --all
-python run_lesson.py --reset
+python run_lesson.py
+```
+
+That's it — no arguments. The runner opens an interactive menu:
+
+```
+n        - Continue / retry current lesson
+a        - Run ALL lesson tests
+s        - Show progress
+p <num>  - Open a completed lesson
+i <num>  - Preview any lesson
+r        - Reset everything
+q        - Quit
 ```
 
 ## How It Works
@@ -75,6 +84,6 @@ Complete lessons to earn badges:
 
 **"Tests are failing"** - Read the error message carefully and check your code
 
-**"I want to start over"** - Run `python run_lesson.py --reset`
+**"I want to start over"** - From the menu, choose `r` (Reset everything) and confirm with `y`
 
 **"I want to play the game"** - Run `python main.py` (after completing lessons 31-50)
