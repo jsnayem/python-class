@@ -102,7 +102,9 @@ def _run_module_against_blank_lessons(num, sandbox):
             with redirect_stdout(io.StringIO()):
                 fn()
             passed += 1
-        except Exception:
+        except BaseException:
+            # Covers both failures and pytest.skip (an unattempted lesson),
+            # neither of which is a pass.
             pass
     return passed, len(graded)
 
