@@ -105,9 +105,16 @@ python-class/
 ## Running the course
 
 ```bash
-python run_lesson.py        # interactive menu
-python run_lesson.py 7      # jump to one lesson
+python run_lesson.py           # interactive menu (shows current lesson, badges, compass)
+python run_lesson.py 7         # open + test one lesson and exit
+python run_lesson.py --all     # run every lesson's tests
+python run_lesson.py --progress  # show progress and badges
+python run_lesson.py --reset   # reset progress and lesson files
 ```
+
+> The runner needs `pytest`. If you run it with plain `python3` and tests
+> won't load, install pytest once with `python3 -m pip install pytest`, or run
+> the whole course with `uv run --with pytest python run_lesson.py`.
 
 After editing lesson instructions, refresh the student's copies:
 
