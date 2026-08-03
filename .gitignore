@@ -3,6 +3,7 @@ progress.json
 savegame.json
 save.txt
 tests/tmp_save_*.txt
+lessons_backup_*/
 
 # Python
 __pycache__/
