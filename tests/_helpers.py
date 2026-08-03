@@ -11,7 +11,9 @@ Design rules for every lesson test (see tests/README.md):
    requiring an exact source substring like ``hero_gold + 20`` (which
    forbids the equally correct ``hero_gold += 20``).
 3. Every lesson test module must call ``requires_student_code(n)`` (directly
-   or via ``run_student``) so a blank starter file can never pass.
+   or via ``run_student``) so a blank starter file can never pass. An
+   unattempted lesson *skips*, so a student sees red only for work they have
+   actually attempted.
 4. Use ``ROOT``-anchored paths so tests run from any working directory.
 """
 import ast
@@ -23,6 +25,8 @@ import tempfile
 from contextlib import redirect_stdout
 from pathlib import Path
 from typing import Any
+
+import pytest
 
 ROOT = Path(__file__).parent.parent
 LESSONS_DIR = ROOT / "lessons"
@@ -147,17 +151,20 @@ def is_blank_scaffold(lesson_num: int) -> bool:
 
 
 def requires_student_code(lesson_num: int) -> str:
-    """Fail unless the student actually wrote code; return that code.
+    """Skip until the student writes code; then return that code.
 
-    This is the single guard that stops an untouched starter file from
-    passing a lesson. Every lesson test module must go through it.
+    An unattempted lesson is *pending*, not broken, so it skips rather than
+    fails: a student who has finished lesson 7 should see a clean run, not 43
+    red lessons they haven't reached. The blank-starter guard still holds,
+    because a skip never counts as a pass.
     """
     code = student_code(lesson_num)
-    assert _meaningful_lines(code), (
-        f"Lesson {lesson_num} has no student code yet — open "
-        f"{lesson_path(lesson_num).name} and write your solution below the "
-        f"TODO line."
-    )
+    if not _meaningful_lines(code):
+        pytest.skip(
+            f"Lesson {lesson_num} not started yet — open "
+            f"{lesson_path(lesson_num).name} and write your solution below "
+            f"the TODO line."
+        )
     return code
 
 
