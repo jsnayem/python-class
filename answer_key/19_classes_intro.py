@@ -17,3 +17,8 @@ class Animal:
 class Dog(Animal):
     def speak(self):
         return "Woof!"
+
+
+if __name__ == "__main__":
+    dog = Dog("Buddy")
+    print(f"{dog.name} says {dog.speak()}")

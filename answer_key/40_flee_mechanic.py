@@ -8,3 +8,8 @@ import random
 
 def flee(chance=0.5):
     return random.random() < chance
+
+
+if __name__ == "__main__":
+    print("You try to escape...")
+    print("You got away!" if flee() else "The monster blocks your path!")

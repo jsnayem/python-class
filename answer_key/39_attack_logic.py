@@ -9,3 +9,15 @@ def calculate_damage(attacker, defender):
     power = getattr(attacker, "attack_power", 10)
     defense = getattr(defender, "defense", 0)
     return max(1, power - defense)
+
+
+if __name__ == "__main__":
+    class _Fighter:
+        def __init__(self, attack_power, defense):
+            self.attack_power = attack_power
+            self.defense = defense
+
+    _hero = _Fighter(12, 2)
+    _monster = _Fighter(8, 4)
+    print(f"Hero hits for {calculate_damage(_hero, _monster)}")
+    print(f"Monster hits for {calculate_damage(_monster, _hero)}")

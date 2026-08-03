@@ -6,3 +6,8 @@ class Item:
         self.name = name
         self.description = description
         self.value = value
+
+
+if __name__ == "__main__":
+    ring = Item("Ring", "A shiny ring", 25)
+    print(f"{ring.name} - {ring.description} ({ring.value} gold)")

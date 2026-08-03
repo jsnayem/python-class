@@ -17,3 +17,10 @@ class Monster:
         if self.health < 0:
             self.health = 0
         return damage
+
+
+if __name__ == "__main__":
+    goblin = Monster("Goblin", 30, 8, 15)
+    print(f"A {goblin.name} appears with {goblin.health} HP!")
+    goblin.take_damage(10)
+    print(f"{goblin.name} now has {goblin.health} HP (alive={goblin.is_alive()})")

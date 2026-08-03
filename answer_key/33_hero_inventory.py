@@ -12,3 +12,11 @@ class Hero:
     def drop_item(self, item):
         if item in self.inventory:
             self.inventory.remove(item)
+
+
+if __name__ == "__main__":
+    hero = Hero("Alex")
+    hero.add_item("sword")
+    print(f"{hero.name} carries: {hero.inventory}")
+    hero.drop_item("sword")
+    print(f"After dropping the sword: {hero.inventory}")

@@ -18,3 +18,10 @@ class Potion(Item):
     def __init__(self, name, description, value, heal_amount):
         super().__init__(name, description, value)
         self.heal_amount = heal_amount
+
+
+if __name__ == "__main__":
+    sword = Weapon("Sword", "A sharp blade", 50, 5)
+    potion = Potion("Health Potion", "Restores HP", 20, 30)
+    print(f"{sword.name}: +{sword.attack_bonus} attack, {sword.value} gold")
+    print(f"{potion.name}: heals {potion.heal_amount}, {potion.value} gold")
