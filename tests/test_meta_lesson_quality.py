@@ -93,10 +93,12 @@ def test_escape_sequences_render_literally():
     for n in LESSON_NUMBERS:
         raw = _scaffold(n).read_text()
         doc = _instructions(n)
-        # If the source mentions a tab/newline escape but the rendered
+        # If the source mentions an escape sequence but the rendered
         # docstring has lost it, the docstring needed the r prefix.
-        if "\\t" in raw and "\\t" not in doc:
-            broken.append(n)
+        for escape in ("\\t", "\\n"):
+            if raw.count(escape) > doc.count(escape):
+                broken.append(n)
+                break
     assert not broken, (
         f"These lessons teach escape sequences but render them as real "
         f"whitespace; use a raw docstring: {broken}"
@@ -132,10 +134,27 @@ def test_every_name_the_tests_require_is_named_in_the_instructions():
     problems = {}
     for n in LESSON_NUMBERS:
         test_src = (tests_dir / f"test_{n:02d}.py").read_text()
-        demanded = set(re.findall(r'run\.get\("(\w+)"\)', test_src))
-        demanded |= set(re.findall(r'defines_(?:function|class)\(\d+, "(\w+)"\)', test_src))
         doc = _instructions(n).lower()
-        missing = sorted(d for d in demanded if d.lower() not in doc)
+        # Names looked up on one line joined by `or` are alternatives: the
+        # lesson only has to offer one of them.
+        groups = []
+        for line in test_src.splitlines():
+            found = re.findall(r'run\.get\("(\w+)"\)', line)
+            if found:
+                groups.append(found)
+        groups += [
+            [name]
+            for name in re.findall(
+                r'defines_(?:function|class)\(\d+, "(\w+)"\)', test_src
+            )
+        ]
+        missing = sorted(
+            {
+                group[0]
+                for group in groups
+                if not any(name.lower() in doc for name in group)
+            }
+        )
         if missing:
             problems[n] = missing
     assert not problems, (
