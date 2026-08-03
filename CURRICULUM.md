@@ -56,18 +56,18 @@ python-class/
 | 8 | `08_if_statements.py` | If Statements - Making Decisions | `boolean`, `comparison`, `and`, `or` |
 | 9 | `09_loops.py` | Loops - Repeating Without Retyping | `loop`, `while`, `for`, `iterate`, `+= 1` |
 | 10 | `10_functions.py` | Functions - Naming A Job | `function`, `def`, `parameter`, `argument`, `call` |
-| 11 | `11_loops_intro.py` | Functions - Making a Spell | `define`, `parameter`, `argument`, `body` |
-| 12 | `12_while_loops.py` | Default Arguments - Optional Information | `default`, `optional`, `required` |
+| 11 | `11_functions_spell.py` | Functions - Making a Spell | `define`, `parameter`, `argument`, `body` |
+| 12 | `12_default_arguments.py` | Default Arguments - Optional Information | `default`, `optional`, `required` |
 | 13 | `13_for_loops.py` | For Loops - Doing Something To Every Item | `for`, `iterate`, `range(3)`, `loop variable` |
 | 14 | `14_functions_intro.py` | Calling A Function Many Times | `call`, `reuse`, `DRY` |
-| 15 | `15_function_args.py` | Dictionaries - Labelled Information | `dictionary`, `key`, `value`, `.keys()`, `.values()` |
+| 15 | `15_dictionaries.py` | Dictionaries - Labelled Information | `dictionary`, `key`, `value`, `.keys()`, `.values()` |
 | 16 | `16_return_values.py` | Return Values - Sending An Answer Back | `return`, `None` |
-| 17 | `17_dictionaries.py` | Classes - Designing Your Own Kind Of Thing | `class`, `object`, `__init__`, `self`, `attribute` |
+| 17 | `17_classes.py` | Classes - Designing Your Own Kind Of Thing | `class`, `object`, `__init__`, `self`, `attribute` |
 | 18 | `18_tuples.py` | Tuples - Fixed Groups Of Values | `tuple`, `immutable`, `index`, `unpacking` |
-| 19 | `19_classes_intro.py` | Inheritance - Building On Another Class | `inheritance`, `child class`, `override` |
+| 19 | `19_inheritance_intro.py` | Inheritance - Building On Another Class | `inheritance`, `child class`, `override` |
 | 20 | `20_objects.py` | Objects Interacting - A Simple Attack | `method`, `state`, `mutate` |
 | 21 | `21_attributes.py` | Class Attributes - Shared By Everyone | `instance attribute`, `class attribute`, `class_item` |
-| 22 | `22_methods.py` | Inheritance - A Weapon Is An Item | `base class`, `subclass`, `is-a` |
+| 22 | `22_subclasses.py` | Inheritance - A Weapon Is An Item | `base class`, `subclass`, `is-a` |
 | 23 | `23_inheritance.py` | super() - Letting The Parent Do Its Job | `super()`, `super().__init__(...)`, `price`, `bonus`, `amount` |
 | 24 | `24_try_except.py` | Error Handling - Surviving Bad Input | `exception`, `ValueError`, `try`, `except`, `int()` |
 | 25 | `25_file_writing.py` | File Writing - Saving Something Forever | `file`, `open()`, `mode "w"`, `.write()`, `with` |
