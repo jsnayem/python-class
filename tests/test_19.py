@@ -32,5 +32,5 @@ def test_prints_dog_info():
 
 
 def test_reference_dog_speaks():
-    m = load_answer("19_classes_intro")
+    m = load_answer("19_inheritance_intro")
     assert m.Dog("Buddy").speak() == "Woof!"
