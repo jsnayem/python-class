@@ -170,11 +170,9 @@ def _lesson_is_blank_scaffold(lesson_num):
         return True
 
     # Drop the leading module docstring (the shared instructions).
-    stripped = source.lstrip()
-    if stripped.startswith('"""'):
-        end = source.find('"""', 3)
-        if end != -1:
-            source = source[end + 3:]
+    bounds = _docstring_bounds(source)
+    if bounds is not None:
+        source = source[bounds[1] + 3:]
 
     # Ignore blank lines and the scaffold TODO marker; require real code.
     meaningful = [
@@ -272,9 +270,30 @@ def run_lesson_tests_from_file(test_file, label=None):
         return True
 
 
+def _docstring_bounds(source):
+    """Locate the leading module docstring, allowing a string prefix.
+
+    Lessons that teach escape sequences use a raw docstring (r\"\"\"...\"\"\") so
+    that \\n and \\t appear literally in the instructions. Returns
+    (body_start, close_start) or None when there is no docstring.
+    """
+    stripped = source.lstrip()
+    offset = len(source) - len(stripped)
+    prefix = 0
+    while prefix < 2 and prefix < len(stripped) and stripped[prefix] in "rRbBuUfF":
+        prefix += 1
+    for quote in ('"""', "'''"):
+        if stripped[prefix:].startswith(quote):
+            body_start = offset + prefix + 3
+            close_start = source.find(quote, body_start)
+            if close_start == -1:
+                return None
+            return body_start, close_start
+    return None
+
+
 def show_lesson(lesson_num):
     """Display the lesson instructions."""
-    lesson_file = LESSONS_DIR / f"{lesson_num:02d}_*.py"
     lesson_files = list(LESSONS_DIR.glob(f"{lesson_num:02d}_*.py"))
     if not lesson_files:
         print_error(f"Lesson {lesson_num} not found!")
@@ -285,14 +304,13 @@ def show_lesson(lesson_num):
         content = f.read()
 
     # Extract the docstring as instructions
-    if content.startswith('"""'):
-        end = content.find('"""', 3)
-        if end != -1:
-            instructions = content[3:end]
-            print_header(f"Lesson {lesson_num}", "📚")
-            print(instructions)
-            print("=" * 60)
-            return True
+    bounds = _docstring_bounds(content)
+    if bounds is not None:
+        body_start, close_start = bounds
+        print_header(f"Lesson {lesson_num}", "📚")
+        print(content[body_start:close_start])
+        print("=" * 60)
+        return True
 
     print_header(f"Lesson {lesson_num}", "📚")
     print(content[:500])

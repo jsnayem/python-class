@@ -93,20 +93,39 @@ def lesson_text(num: int) -> str:
     return lesson_path(num).read_text()
 
 
+def docstring_bounds(source: str):
+    """Locate the leading module docstring, allowing a string prefix.
+
+    Lessons that teach escape sequences use a raw docstring (r\"\"\"...\"\"\") so
+    that \\n and \\t show up literally in the instructions instead of being
+    turned into a real newline or tab. Returns (start, end) indexes of the
+    opening and closing triple quotes, or None when there is no docstring.
+    """
+    stripped = source.lstrip()
+    offset = len(source) - len(stripped)
+    prefix = 0
+    while prefix < 2 and prefix < len(stripped) and stripped[prefix] in "rRbBuUfF":
+        prefix += 1
+    for quote in ('"""', "'''"):
+        if stripped[prefix:].startswith(quote):
+            start = offset + prefix
+            end = source.find(quote, start + 3)
+            if end == -1:
+                return None
+            return start, end + 3
+    return None
+
+
 def strip_docstring(source: str) -> str:
     """Return source with its leading module docstring removed.
 
-    Only a docstring at the very top of the file (the first non-blank token
-    is a triple-quoted string) is stripped, so a student's own triple-quoted
-    comments later in the file are left intact.
+    Only a docstring at the very top of the file is stripped, so a student's
+    own triple-quoted comments later in the file are left intact.
     """
-    stripped = source.lstrip()
-    if not stripped.startswith('"""'):
+    bounds = docstring_bounds(source)
+    if bounds is None:
         return source
-    end = source.find('"""', 3)
-    if end == -1:
-        return source
-    return source[end + 3:]
+    return source[bounds[1]:]
 
 
 def student_code(lesson_num: int) -> str:
