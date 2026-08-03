@@ -17,18 +17,19 @@ NEW WORDS
   :.1f         Show this number with one digit after the point.
 
 HOW IT WORKS
-  name = "Musab"
-  health = 87.5
+  hero = "Musab"
+  hp = 87.5
+  gold = 120
 
-  print(f"{name} has {health} health")
+  print(f"{hero} has {hp} health")
 
   You can put a whole calculation inside the brackets too:
 
-      print(f"Half health is {health / 2}")
+      print(f"Half health is {hp / 2}")
 
   For neat columns, add a format spec after a colon:
 
-      print(f"{name:<10}{health:.1f}")
+      print(f"{hero:<10}{hp:.1f}")
 
   The :<10 pads the name out to ten characters so several rows line
   up underneath each other, and :.1f trims a long decimal down to one
@@ -36,23 +37,26 @@ HOW IT WORKS
   ragged.
 
 YOUR TASK
-  Step 1: Create variables for a hero's name and some numbers.
-  Step 2: Print a status line using an f-string with at least two
-          placeholders in it.
+  Step 1: Create three variables named exactly hero (a string), hp
+          and gold (numbers).
+  Step 2: Print a status table of at least two rows using f-strings,
+          showing the hero, hp and gold values.
   Step 3: Use a format spec such as :<10 or :.1f to line up or tidy
-          one of the values.
+          the values into columns.
 
 EXAMPLE
   This example is a race result, so you still write your own hero
-  status.
+  table.
 
       runner = "Zoe"
       seconds = 12.4567
       print(f"{runner:<8}{seconds:.2f} seconds")
+      print(f"{'Total':<8}{seconds * 2:.2f} seconds")
 
 WHEN IT WORKS YOU'LL SEE
-  Musab     87.5
-  Zoe       64.0
+  Hero      Musab
+  HP        87.5
+  Gold      120
 
 IF YOU GET STUCK
   The brackets print    -> you forgot the f before the opening quote.

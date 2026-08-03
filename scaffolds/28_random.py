@@ -18,54 +18,66 @@ NEW WORDS
 HOW IT WORKS
   import random
 
-  roll = random.randint(1, 20)
-  print(f"You rolled {roll}")
+  def roll_dice(sides=6):
+      return random.randint(1, sides)
 
-  Every time you run this you may get a different number between 1
-  and 20, including both 1 and 20 themselves.
+  random.randint(1, sides) gives a whole number from 1 up to and
+  including sides. Because sides has a default of 6, roll_dice()
+  rolls an ordinary six-sided die, while roll_dice(20) rolls a
+  twenty-sided one.
 
-      monsters = ["Goblin", "Orc", "Slime"]
-      enemy = random.choice(monsters)
+      loot_table = ["Gold Coin", "Rusty Sword", "Health Potion"]
 
-  random.choice() picks one element for you. Together these two
-  functions can generate a whole random encounter:
+      def random_loot():
+          return random.choice(loot_table)
 
-      damage = random.randint(5, 15)
-      print(f"The {enemy} hits you for {damage}!")
+  random.choice() picks one element out of a list. Returning it means
+  the caller can print it or add it to an inventory.
 
 YOUR TASK
-  Step 1: Import the random module at the top of your file.
-  Step 2: Use random.randint() to roll some damage, and print it.
-  Step 3: Create a list of monster names and use random.choice() to
-          pick one, then print which monster appeared.
-  Step 4: Use a loop to simulate three attacks in a row, printing the
-          damage each time.
+  Step 1: Import random, then define a function named roll_dice with
+          one optional parameter named sides whose default is 6. It
+          must return a number from 1 to sides.
+  Step 2: Call roll_dice() and print the result, then call
+          roll_dice(20) to show a bigger die.
+  Step 3: Create a list of loot items, then define a function named
+          random_loot that returns one of them at random.
+  Step 4: Use a loop to roll three times and print what you find.
 
 EXAMPLE
-  This example picks a lunch, so you still write your own combat
-  rolls.
+  This example picks a lunch, so you still write your own dice and
+  loot.
 
       import random
 
       lunches = ["pizza", "pasta", "curry"]
-      print(random.choice(lunches))
-      for i in range(2):
-          print(random.randint(1, 6))
+
+      def random_lunch():
+          return random.choice(lunches)
+
+      def spin(sides=3):
+          return random.randint(1, sides)
+
+      print(random_lunch())
+      print(spin())
 
 WHEN IT WORKS YOU'LL SEE
-  A wild Orc appears!
-  Attack 1: 12 damage
-  Attack 2: 7 damage
-  Attack 3: 15 damage
+  You roll a 4 on a six-sided die.
+  You roll a 17 on a twenty-sided die.
+  You find: Health Potion
+  You find: Gold Coin
+  You find: Health Potion
 
-  (Your numbers will be different every run. That is the point.)
+  (Your numbers change every run. That is the point.)
 
 IF YOU GET STUCK
   NameError: random     -> add import random at the top.
-  Same number always    -> check you called random.randint() inside
-                           the loop, not once before it.
-  randint gives too     -> randint(1, 6) includes 6, unlike range.
-  high a number
+  Same number always    -> call roll_dice() inside the loop, not once
+                           before it.
+  roll_dice() gives an  -> randint(1, sides) includes both ends,
+  unexpected number        unlike range().
+  TypeError: missing    -> sides needs a default:
+  argument                 def roll_dice(sides=6)
 
 CHECK YOUR WORK
   python run_lesson.py 28

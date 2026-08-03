@@ -20,14 +20,14 @@ HOW IT WORKS
   Put the import line at the very top of your file. Then saving a
   whole dictionary takes one line:
 
-      hero = {"name": "Musab", "health": 100, "gold": 120}
-      with open("hero.json", "w") as f:
-          json.dump(hero, f)
+      save_data = {"name": "Musab", "health": 100, "gold": 120}
+      with open("savegame.json", "w") as f:
+          json.dump(save_data, f)
 
   Loading it back gives you a real dictionary again, with the numbers
   still numbers:
 
-      with open("hero.json", "r") as f:
+      with open("savegame.json", "r") as f:
           loaded = json.load(f)
       print(loaded["name"])
 
@@ -36,9 +36,10 @@ HOW IT WORKS
   JSON for save files.
 
 YOUR TASK
-  Step 1: Import the json module at the top of your file.
-  Step 2: Create a dictionary describing your hero, then use
-          json.dump() to save it into hero.json.
+  Step 1: Import the json module, then create a dictionary named
+          exactly save_data describing your hero. Give it a "name"
+          key, plus any other details you like.
+  Step 2: Use json.dump() to save save_data into savegame.json.
   Step 3: Use json.load() to read the file back, and print a value
           from the loaded dictionary.
 
@@ -56,7 +57,7 @@ EXAMPLE
       print(back["difficulty"])
 
 WHEN IT WORKS YOU'LL SEE
-  Saved hero to hero.json
+  Saved hero to savegame.json
   Loaded hero: Musab with 120 gold
 
 IF YOU GET STUCK
