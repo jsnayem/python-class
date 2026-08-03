@@ -1,20 +1,35 @@
-"""Tests for Lesson 50: Play and Share"""
-from pathlib import Path
+"""Tests for Lesson 50: Play and Share."""
+from _helpers import assert_scaffold_is_blank, count_calls, defines_function, run_student
 
 
-def test_file_exists():
-    lesson_files = sorted(Path("lessons").glob("50_*.py"))
-    assert lesson_files, "Lesson 50 file should exist"
+def test_scaffold_has_no_answer():
+    assert_scaffold_is_blank(50)
 
 
-def test_has_credits():
-    text = (Path("lessons") / next(Path("lessons").glob("50_*.py")).name).read_text()
-    assert "credit" in text.lower() or "congratulations" in text.lower()
+def test_prints_a_completion_message():
+    run = run_student(50)
+    assert run.output.strip(), "Step 1: print a completion message."
 
 
-def test_is_valid_python():
-    text = (Path("lessons") / next(Path("lessons").glob("50_*.py")).name).read_text()
-    try:
-        compile(text, "lessons/50_play_and_share.py", "exec")
-    except SyntaxError as e:
-        raise AssertionError(f"Invalid Python syntax: {e}")
+def test_defines_and_calls_credits():
+    assert defines_function(50, "credits"), "Step 2: define a credits() function."
+    assert count_calls(50, "credits") >= 1, "Step 2: call credits()."
+
+
+def test_credits_print_something():
+    run = run_student(50)
+    import io
+    from contextlib import redirect_stdout
+
+    buf = io.StringIO()
+    with redirect_stdout(buf):
+        run.get("credits")()
+    assert buf.getvalue().strip(), "Step 2: credits() should print your credits."
+
+
+def test_says_something_proud():
+    run = run_student(50)
+    lines = [ln for ln in run.output.splitlines() if ln.strip()]
+    assert len(lines) >= 3, (
+        "Step 3: finish with a few proud statements about what you built."
+    )

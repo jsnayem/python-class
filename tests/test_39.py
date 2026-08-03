@@ -1,28 +1,38 @@
-"""Tests for Lesson 39: Combat Loop (damage formula)."""
-from pathlib import Path
-
-from _helpers import load_answer, lesson_text
-
-ROOT = Path(__file__).parent.parent
+"""Tests for Lesson 39: Damage Formula."""
+from _helpers import assert_scaffold_is_blank, defines_function, load_answer, run_student
 
 
-def test_student_file_present():
-    assert list((ROOT / "lessons").glob("39_*.py")), "Lesson 39 file should exist"
+class _Fighter:
+    def __init__(self, attack_power=10, defense=0):
+        self.attack_power = attack_power
+        self.defense = defense
 
 
-def test_student_has_calculate_damage():
-    assert "calculate_damage" in lesson_text(39)
+def test_scaffold_has_no_answer():
+    assert_scaffold_is_blank(39)
 
 
-def test_answer_damage_minimum_one():
+def test_defines_calculate_damage():
+    assert defines_function(39, "calculate_damage"), (
+        "Step 1: define calculate_damage(attacker, defender)."
+    )
+
+
+def test_damage_is_power_minus_defense():
+    run = run_student(39)
+    fn = run.get("calculate_damage")
+    assert fn(_Fighter(10, 0), _Fighter(10, 0)) == 10
+    assert fn(_Fighter(12, 4), _Fighter(10, 4)) == 8
+
+
+def test_damage_never_drops_below_one():
+    run = run_student(39)
+    fn = run.get("calculate_damage")
+    assert fn(_Fighter(3, 0), _Fighter(10, 10)) == 1, (
+        "Step 2: a hit always deals at least 1 damage."
+    )
+
+
+def test_reference_damage():
     m = load_answer("39_attack_logic")
-
-    class Fighter:
-        attack_power = 10
-        defense = 0
-
-    weak = Fighter()
-    weak.attack_power = 3
-    weak.defense = 10
-    assert m.calculate_damage(weak, weak) == 1  # never less than 1
-    assert m.calculate_damage(Fighter(), Fighter()) == 10
+    assert m.calculate_damage(_Fighter(3, 10), _Fighter(3, 10)) == 1

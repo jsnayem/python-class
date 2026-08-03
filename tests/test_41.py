@@ -1,20 +1,33 @@
-"""Tests for Lesson 41: Shop System"""
-from pathlib import Path
+"""Tests for Lesson 41: Shop System - Buy Items."""
+from _helpers import assert_scaffold_is_blank, defines_function, run_student
 
 
-def test_file_exists():
-    lesson_files = sorted(Path("lessons").glob("41_*.py"))
-    assert lesson_files, "Lesson 41 file should exist"
+def test_scaffold_has_no_answer():
+    assert_scaffold_is_blank(41)
 
 
-def test_has_shop():
-    text = (Path("lessons") / next(Path("lessons").glob("41_*.py")).name).read_text()
-    assert "shop" in text.lower()
+def test_shop_has_prices():
+    run = run_student(41)
+    shop = run.get("shop")
+    assert isinstance(shop, dict) and shop, "Step 1: create a shop dict of prices."
+    assert all(isinstance(v, (int, float)) for v in shop.values()), (
+        "Step 1: every shop entry needs a numeric price."
+    )
+    keys = {str(k).lower() for k in shop}
+    assert "sword" in keys and "potion" in keys, (
+        "Step 1: the shop should sell a sword and a potion."
+    )
 
 
-def test_is_valid_python():
-    text = (Path("lessons") / next(Path("lessons").glob("41_*.py")).name).read_text()
-    try:
-        compile(text, "lessons/41_shop_system.py", "exec")
-    except SyntaxError as e:
-        raise AssertionError(f"Invalid Python syntax: {e}")
+def test_defines_buy():
+    assert defines_function(41, "buy"), "Step 2: define buy(hero, item_key)."
+
+
+def test_buying_costs_gold_and_grants_the_item():
+    run = run_student(41)
+    hero = run.get("hero")
+    assert hero is not None, "Step 3: create a hero."
+    assert hero.gold < 50 or len(getattr(hero, "inventory", [])) >= 2, (
+        "Step 3: after buying a sword and a potion the hero should have spent "
+        "gold and gained items."
+    )

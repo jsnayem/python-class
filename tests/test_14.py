@@ -1,20 +1,25 @@
-"""Tests for Lesson 14: Functions Intro"""
-from pathlib import Path
+"""Tests for Lesson 14: Functions Intro."""
+from _helpers import assert_scaffold_is_blank, count_calls, run_student
 
 
-def test_file_exists():
-    lesson_files = sorted(Path("lessons").glob("14_*.py"))
-    assert lesson_files, "Lesson 14 file should exist"
+def test_scaffold_has_no_answer():
+    assert_scaffold_is_blank(14)
 
 
-def test_has_function():
-    text = (Path("lessons") / next(Path("lessons").glob("14_*.py")).name).read_text()
-    assert "def " in text
+def test_defines_cast_spell():
+    run = run_student(14)
+    assert callable(run.get("cast_spell")), "Step 1: define cast_spell(spell_name)."
 
 
-def test_is_valid_python():
-    text = (Path("lessons") / next(Path("lessons").glob("14_*.py")).name).read_text()
-    try:
-        compile(text, "lessons/14_functions_intro.py", "exec")
-    except SyntaxError as e:
-        raise AssertionError(f"Invalid Python syntax: {e}")
+def test_called_three_times():
+    assert count_calls(14, "cast_spell") >= 3, (
+        "Step 2: call cast_spell three times with different spells."
+    )
+
+
+def test_prints_three_spell_messages():
+    run = run_student(14)
+    lines = [ln for ln in run.output.splitlines() if ln.strip()]
+    assert len(lines) >= 3, (
+        f"Step 2: three calls should print three messages; got {len(lines)}."
+    )

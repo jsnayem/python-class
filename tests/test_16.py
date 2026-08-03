@@ -1,20 +1,20 @@
-"""Tests for Lesson 16: Return Values"""
-from pathlib import Path
+"""Tests for Lesson 16: Return Values."""
+from _helpers import assert_scaffold_is_blank, run_student
 
 
-def test_file_exists():
-    lesson_files = sorted(Path("lessons").glob("16_*.py"))
-    assert lesson_files, "Lesson 16 file should exist"
+def test_scaffold_has_no_answer():
+    assert_scaffold_is_blank(16)
 
 
-def test_has_return():
-    text = (Path("lessons") / next(Path("lessons").glob("16_*.py")).name).read_text()
-    assert "return " in text
+def test_calculate_heal_doubles_the_amount():
+    run = run_student(16)
+    fn = run.get("calculate_heal")
+    assert callable(fn), "Step 1: define calculate_heal(amount)."
+    assert fn(10) == 20, "Step 1: calculate_heal should return amount * 2."
+    assert fn(0) == 0
+    assert fn(7) == 14
 
 
-def test_is_valid_python():
-    text = (Path("lessons") / next(Path("lessons").glob("16_*.py")).name).read_text()
-    try:
-        compile(text, "lessons/16_return_values.py", "exec")
-    except SyntaxError as e:
-        raise AssertionError(f"Invalid Python syntax: {e}")
+def test_prints_the_result():
+    run = run_student(16)
+    assert run.output.strip(), "Step 2: call calculate_heal and print the result."

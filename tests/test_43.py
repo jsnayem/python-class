@@ -1,20 +1,33 @@
-"""Tests for Lesson 43: Game Loop"""
-from pathlib import Path
+"""Tests for Lesson 43: Game Loop - Exploring."""
+from _helpers import assert_scaffold_is_blank, run_student
 
 
-def test_file_exists():
-    lesson_files = sorted(Path("lessons").glob("43_*.py"))
-    assert lesson_files, "Lesson 43 file should exist"
+def test_scaffold_has_no_answer():
+    assert_scaffold_is_blank(43)
 
 
-def test_has_loop():
-    text = (Path("lessons") / next(Path("lessons").glob("43_*.py")).name).read_text()
-    assert "while " in text or "for " in text
+def test_world_map_exists():
+    run = run_student(43)
+    world = run.get("world")
+    assert isinstance(world, dict) and world, "Step 1: create the world map."
 
 
-def test_is_valid_python():
-    text = (Path("lessons") / next(Path("lessons").glob("43_*.py")).name).read_text()
-    try:
-        compile(text, "lessons/43_game_loop.py", "exec")
-    except SyntaxError as e:
-        raise AssertionError(f"Invalid Python syntax: {e}")
+def test_the_hero_moves_from_town_to_forest():
+    run = run_student(43)
+    location = run.get("current") or run.get("location") or run.get("current_location")
+    assert location is not None, (
+        "Step 3: keep the player's place in a variable called current (or "
+        "location)."
+    )
+    assert str(location).lower() == "forest", (
+        f"Step 3: after the deterministic move the player should be in the "
+        f"forest, not {location!r}."
+    )
+
+
+def test_prints_the_journey():
+    run = run_student(43)
+    out = run.output.lower()
+    assert "town" in out and "forest" in out, (
+        "Step 3: print where the player is as they move."
+    )

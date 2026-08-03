@@ -1,20 +1,30 @@
-"""Tests for Lesson 13: For Loops"""
-from pathlib import Path
+"""Tests for Lesson 13: For Loops."""
+import ast
+
+from _helpers import assert_scaffold_is_blank, run_student, uses_node
 
 
-def test_file_exists():
-    lesson_files = sorted(Path("lessons").glob("13_*.py"))
-    assert lesson_files, "Lesson 13 file should exist"
+def test_scaffold_has_no_answer():
+    assert_scaffold_is_blank(13)
 
 
-def test_has_for_loop():
-    text = (Path("lessons") / next(Path("lessons").glob("13_*.py")).name).read_text()
-    assert "for " in text
+def test_uses_a_for_loop():
+    assert uses_node(13, (ast.For,)), "Steps 1-2: use for loops."
 
 
-def test_is_valid_python():
-    text = (Path("lessons") / next(Path("lessons").glob("13_*.py")).name).read_text()
-    try:
-        compile(text, "lessons/13_for_loops.py", "exec")
-    except SyntaxError as e:
-        raise AssertionError(f"Invalid Python syntax: {e}")
+def test_prints_every_inventory_item():
+    run = run_student(13)
+    inv = run.get("inventory")
+    assert isinstance(inv, list) and inv, "Step 1: create an inventory list."
+    for item in inv:
+        assert str(item).lower() in run.output.lower(), (
+            f"Step 1: print each inventory item ({item} is missing)."
+        )
+
+
+def test_prints_three_numbers_from_range():
+    run = run_student(13)
+    digits = [ln for ln in run.output.splitlines() if any(c.isdigit() for c in ln)]
+    assert len(digits) >= 3, (
+        "Step 2: use for i in range(3) to print three numbers."
+    )

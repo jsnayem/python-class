@@ -1,34 +1,30 @@
-"""Tests for Lesson 31: Build the Hero Class.
-
-Validates real Hero behavior against the answer_key/ reference.
-"""
-import importlib.util
-from pathlib import Path
-
-ROOT = Path(__file__).parent.parent
+"""Tests for Lesson 31: Build the Hero Class."""
+from _helpers import assert_scaffold_is_blank, defines_class, load_answer, run_student
 
 
-def _load_answer(modname):
-    spec = importlib.util.spec_from_file_location(
-        modname, ROOT / "answer_key" / f"{modname}.py"
-    )
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
+def test_scaffold_has_no_answer():
+    assert_scaffold_is_blank(31)
 
 
-def test_student_file_present():
-    assert list((ROOT / "lessons").glob("31_*.py")), "Lesson 31 file should exist"
+def test_defines_hero_class():
+    assert defines_class(31, "Hero"), "Step 1: create the Hero class."
 
 
-def test_student_has_hero_class():
-    text = (ROOT / "lessons" / next((ROOT / "lessons").glob("31_*.py")).name).read_text()
-    assert "class Hero" in text
+def test_hero_starts_with_the_standard_stats():
+    run = run_student(31)
+    hero = run.get("Hero")("Alex")
+    assert hero.name == "Alex", "Step 1: store the name on self.name."
+    assert hero.health == 100, "Step 1: a new Hero starts with 100 health."
+    assert hero.gold == 50, "Step 1: a new Hero starts with 50 gold."
 
 
-def test_answer_hero_has_name_health_gold():
-    m = _load_answer("31_hero_class")
+def test_prints_the_hero_stats():
+    run = run_student(31)
+    out = run.output
+    assert "100" in out and "50" in out, "Step 2: print your hero's stats."
+
+
+def test_reference_hero_matches():
+    m = load_answer("31_hero_class")
     hero = m.Hero("Alex")
-    assert hero.name == "Alex"
-    assert hero.health == 100, "Hero should start with 100 HP"
-    assert hero.gold == 50, "Hero should start with 50 gold"
+    assert (hero.health, hero.gold) == (100, 50)

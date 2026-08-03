@@ -1,20 +1,22 @@
-"""Tests for Lesson 18: Tuples"""
-from pathlib import Path
+"""Tests for Lesson 18: Tuples."""
+from _helpers import assert_scaffold_is_blank, run_student
 
 
-def test_file_exists():
-    lesson_files = sorted(Path("lessons").glob("18_*.py"))
-    assert lesson_files, "Lesson 18 file should exist"
+def test_scaffold_has_no_answer():
+    assert_scaffold_is_blank(18)
 
 
-def test_has_tuple():
-    text = (Path("lessons") / next(Path("lessons").glob("18_*.py")).name).read_text()
-    assert "(" in text
+def test_weapon_tuple_exists():
+    run = run_student(18)
+    weapon = run.get("weapon")
+    assert isinstance(weapon, tuple), "Step 1: create a tuple called weapon."
+    assert len(weapon) >= 2, "Step 1: the weapon tuple needs at least 2 values."
 
 
-def test_is_valid_python():
-    text = (Path("lessons") / next(Path("lessons").glob("18_*.py")).name).read_text()
-    try:
-        compile(text, "lessons/18_tuples.py", "exec")
-    except SyntaxError as e:
-        raise AssertionError(f"Invalid Python syntax: {e}")
+def test_prints_both_elements():
+    run = run_student(18)
+    weapon = run.get("weapon", ())
+    for value in weapon[:2]:
+        assert str(value).lower() in run.output.lower(), (
+            f"Step 2: print weapon[0] and weapon[1] ({value} is missing)."
+        )

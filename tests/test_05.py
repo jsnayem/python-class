@@ -1,33 +1,33 @@
-"""Tests for Lesson 5: Strings"""
-import io
-from contextlib import redirect_stdout
+"""Tests for Lesson 5: Strings."""
+from _helpers import assert_scaffold_is_blank, run_student
 
 
-def test_strings_created():
-    with open("lessons/05_strings.py", "r") as f:
-        content = f.read()
-    assert "monster_name" in content
-    assert "monster_desc" in content
+def test_scaffold_has_no_answer():
+    assert_scaffold_is_blank(5)
 
 
-def test_uppercase_lowercase():
-    with open("lessons/05_strings.py", "r") as f:
-        content = f.read()
-    assert "upper()" in content
-    assert "lower()" in content
+def test_monster_strings_created():
+    run = run_student(5)
+    assert isinstance(run.get("monster_name"), str), "Step 1: create monster_name."
+    assert isinstance(run.get("monster_desc"), str), "Step 1: create monster_desc."
 
 
-def test_string_combination():
-    with open("lessons/05_strings.py", "r") as f:
-        content = f.read()
-    assert 'f"' in content or "f'" in content
-    assert "print(" in content
+def test_prints_upper_and_lower_versions():
+    run = run_student(5)
+    name = run.get("monster_name", "")
+    assert name.upper() in run.output, "Step 3: print monster_name.upper()."
+    assert name.lower() in run.output, "Step 3: print monster_name.lower()."
 
 
-def test_is_valid_python():
-    with open("lessons/05_strings.py", "r") as f:
-        content = f.read()
-    try:
-        compile(content, "lessons/05_strings.py", "exec")
-    except SyntaxError as e:
-        raise AssertionError(f"Invalid Python syntax: {e}")
+def test_combines_name_and_description():
+    run = run_student(5)
+    name = run.get("monster_name", "")
+    desc = run.get("monster_desc", "")
+    combined = [
+        ln for ln in run.output.splitlines()
+        if name.lower() in ln.lower() and desc.lower() in ln.lower()
+    ]
+    assert combined, (
+        "Step 2: print one message that contains both the monster's name and "
+        "its description."
+    )

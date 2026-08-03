@@ -1,20 +1,37 @@
-"""Tests for Lesson 48: Objectives"""
-from pathlib import Path
+"""Tests for Lesson 48: Objectives."""
+from _helpers import assert_scaffold_is_blank, defines_function, run_student
 
 
-def test_file_exists():
-    lesson_files = sorted(Path("lessons").glob("48_*.py"))
-    assert lesson_files, "Lesson 48 file should exist"
+def test_scaffold_has_no_answer():
+    assert_scaffold_is_blank(48)
 
 
-def test_has_objectives():
-    text = (Path("lessons") / next(Path("lessons").glob("48_*.py")).name).read_text()
-    assert "objective" in text.lower()
+def test_objectives_is_a_list_of_tuples():
+    run = run_student(48)
+    objectives = run.get("objectives")
+    assert isinstance(objectives, list) and objectives, (
+        "Step 1: create a list called objectives."
+    )
+    assert all(isinstance(o, tuple) and len(o) >= 2 for o in objectives), (
+        "Step 1: each objective is a tuple of (description, done)."
+    )
+    done_flags = {bool(o[1]) for o in objectives}
+    assert done_flags == {True, False}, (
+        "Step 3: include at least one finished and one unfinished objective."
+    )
 
 
-def test_is_valid_python():
-    text = (Path("lessons") / next(Path("lessons").glob("48_*.py")).name).read_text()
-    try:
-        compile(text, "lessons/48_objectives.py", "exec")
-    except SyntaxError as e:
-        raise AssertionError(f"Invalid Python syntax: {e}")
+def test_show_objectives_marks_done_and_not_done():
+    assert defines_function(48, "show_objectives"), (
+        "Step 2: define show_objectives(objectives)."
+    )
+    run = run_student(48)
+    for text, _done in run.get("objectives"):
+        assert str(text).lower() in run.output.lower(), (
+            f"Step 2: print every objective ({text} is missing)."
+        )
+    marks = {ln.strip()[:3] for ln in run.output.splitlines() if ln.strip()}
+    assert len(marks) >= 2, (
+        "Step 3: show finished and unfinished objectives differently (e.g. "
+        "[x] and [ ])."
+    )

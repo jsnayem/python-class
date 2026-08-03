@@ -1,20 +1,28 @@
-"""Tests for Lesson 22: Inheritance - Weapon Subclass"""
-from pathlib import Path
+"""Tests for Lesson 22: Inheritance - Weapon Subclass."""
+from _helpers import assert_scaffold_is_blank, run_student
 
 
-def test_file_exists():
-    lesson_files = sorted(Path("lessons").glob("22_*.py"))
-    assert lesson_files, "Lesson 22 file should exist"
+def test_scaffold_has_no_answer():
+    assert_scaffold_is_blank(22)
 
 
-def test_has_inheritance():
-    text = (Path("lessons") / next(Path("lessons").glob("22_*.py")).name).read_text()
-    assert "class " in text
+def test_item_stores_name_and_value():
+    run = run_student(22)
+    Item = run.get("Item")
+    assert Item is not None, "Step 1: create the base Item class."
+    item = Item("Ring", 25)
+    assert item.name == "Ring" and item.value == 25, (
+        "Step 1: Item(name, value) should store both on self."
+    )
 
 
-def test_is_valid_python():
-    text = (Path("lessons") / next(Path("lessons").glob("22_*.py")).name).read_text()
-    try:
-        compile(text, "lessons/22_methods.py", "exec")
-    except SyntaxError as e:
-        raise AssertionError(f"Invalid Python syntax: {e}")
+def test_weapon_subclasses_item():
+    run = run_student(22)
+    Item, Weapon = run.get("Item"), run.get("Weapon")
+    assert Weapon is not None, "Step 2: create the Weapon subclass."
+    assert issubclass(Weapon, Item), "Step 2: Weapon should inherit from Item."
+
+
+def test_prints_the_weapon():
+    run = run_student(22)
+    assert run.output.strip(), "Step 3: create a Weapon and print it."

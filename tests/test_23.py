@@ -1,40 +1,37 @@
-"""Tests for Lesson 23: Inheritance (Shop Items).
-
-Validates real subclass behavior against the answer_key/ reference.
-"""
-import importlib.util
-from pathlib import Path
-
-ROOT = Path(__file__).parent.parent
+"""Tests for Lesson 23: Inheritance - Shop Items."""
+from _helpers import assert_scaffold_is_blank, load_answer, run_student
 
 
-def _load_answer(modname):
-    spec = importlib.util.spec_from_file_location(
-        modname, ROOT / "answer_key" / f"{modname}.py"
+def test_scaffold_has_no_answer():
+    assert_scaffold_is_blank(23)
+
+
+def test_weapon_and_potion_inherit_from_item():
+    run = run_student(23)
+    Item, Weapon, Potion = run.get("Item"), run.get("Weapon"), run.get("Potion")
+    assert Item is not None, "Step 1: define the base Item class."
+    assert Weapon is not None and issubclass(Weapon, Item), (
+        "Step 1: Weapon should inherit from Item."
     )
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
+    assert Potion is not None and issubclass(Potion, Item), (
+        "Step 1: Potion should inherit from Item."
+    )
 
 
-def test_student_file_present():
-    assert list((ROOT / "lessons").glob("23_*.py")), "Lesson 23 file should exist"
+def test_children_reuse_the_parent_initialiser():
+    run = run_student(23)
+    Weapon = run.get("Weapon")
+    weapon = Weapon("Sword", 50, 5)
+    assert weapon.name == "Sword" and weapon.price == 50, (
+        "Step 2: call super().__init__ so the parent sets name and price."
+    )
 
 
-def test_student_uses_super():
-    text = (ROOT / "lessons" / next((ROOT / "lessons").glob("23_*.py")).name).read_text()
-    assert "super()" in text, "Subclasses should call super().__init__()"
+def test_prints_both_items():
+    run = run_student(23)
+    assert run.output.strip(), "Step 3: create one Weapon and one Potion, print both."
 
 
-def test_answer_weapon_carries_bonus():
-    m = _load_answer("23_inheritance")
-    w = m.Weapon("Sword", 50, 5)
-    assert isinstance(w, m.Item)
-    assert w.name == "Sword" and w.price == 50 and w.bonus == 5
-
-
-def test_answer_potion_carries_amount():
-    m = _load_answer("23_inheritance")
-    p = m.Potion("Health", 20, 30)
-    assert isinstance(p, m.Item)
-    assert p.amount == 30
+def test_reference_potion_carries_amount():
+    m = load_answer("23_inheritance")
+    assert m.Potion("Health", 20, 30).amount == 30

@@ -1,51 +1,33 @@
-"""Tests for Lesson 2: Variables"""
-import io
-from contextlib import redirect_stdout
-
-from _helpers import safe_stdin
+"""Tests for Lesson 2: Variables."""
+from _helpers import assert_scaffold_is_blank, run_student
 
 
 def test_scaffold_has_no_answer():
-    # The scaffold for this lesson must be a blank starter template
-    # (marked with a TODO line), not a filled answer.
-    scaffold = open("scaffolds/02_variables.py").read()
-    assert "TODO: Write your code for Lesson" in scaffold
+    assert_scaffold_is_blank(2)
 
 
-def test_variables_exist():
-    with open("lessons/02_variables.py", "r") as f:
-        content = f.read()
-    assert "hero_name" in content
-    assert "hero_health" in content
-    assert "hero_gold" in content
+def test_variables_exist_with_required_values():
+    run = run_student(2)
+    for name in ("hero_name", "hero_health", "hero_gold"):
+        assert name in run, f"Step 1: create a variable called {name}."
+    assert isinstance(run.get("hero_name"), str), "hero_name should be a string."
+    assert run.get("hero_health") == 100, "Step 1: hero_health should be 100."
 
 
-def test_gold_increases():
-    with open("lessons/02_variables.py", "r") as f:
-        content = f.read()
-    # The lesson asks to add 20 to hero_gold.
-    assert "hero_gold + 20" in content
-    # Execute the student code and verify the gold actually increased to 70
-    # (50 starting gold + 20), rather than matching a brittle label string.
-    ns: dict = {}
-    with safe_stdin(), redirect_stdout(io.StringIO()):
-        exec(compile(content, "lessons/02_variables.py", "exec"), ns)
-    assert ns.get("hero_gold") == 70, (
-        f"hero_gold should be 70 after adding 20 to 50, "
-        f"got {ns.get('hero_gold')!r}"
+def test_gold_increases_by_twenty():
+    # Behavioural: any correct form works (+= , = x + 20, = 20 + x ...).
+    run = run_student(2)
+    assert run.get("hero_gold") == 70, (
+        f"Step 3: hero_gold should be 70 (50 starting gold + 20), got "
+        f"{run.get('hero_gold')!r}."
     )
 
 
-def test_uses_f_strings():
-    with open("lessons/02_variables.py", "r") as f:
-        content = f.read()
-    assert 'f"' in content or "f'" in content
-
-
-def test_is_valid_python():
-    with open("lessons/02_variables.py", "r") as f:
-        content = f.read()
-    try:
-        compile(content, "lessons/02_variables.py", "exec")
-    except SyntaxError as e:
-        raise AssertionError(f"Invalid Python syntax: {e}")
+def test_prints_the_values_with_an_f_string():
+    run = run_student(2)
+    assert str(run.get("hero_name")) in run.output, (
+        "Step 2: print your hero's name."
+    )
+    assert "100" in run.output and "70" in run.output, (
+        "Step 2/3: print the health and the new gold total."
+    )

@@ -1,37 +1,26 @@
-"""Tests for Lesson 3: Printing with Style"""
-import io
-from contextlib import redirect_stdout
-
-from _helpers import safe_stdin
+"""Tests for Lesson 3: Printing with Style."""
+from _helpers import assert_scaffold_is_blank, run_student
 
 
-def test_has_title_border():
-    f = io.StringIO()
-    with safe_stdin(), redirect_stdout(f):
-        exec(open("lessons/03_printing.py").read())
-    output = f.getvalue()
-    assert "=" in output
+def test_scaffold_has_no_answer():
+    assert_scaffold_is_blank(3)
 
 
-def test_prints_hero_status():
-    f = io.StringIO()
-    with safe_stdin(), redirect_stdout(f):
-        exec(open("lessons/03_printing.py").read())
-    output = f.getvalue()
-    assert "HERO" in output.upper()
+def test_prints_a_title_border():
+    run = run_student(3)
+    assert "==" in run.output, "Step 1: print a title border made of '=' characters."
 
 
-def test_uses_escape_sequences():
-    with open("lessons/03_printing.py", "r") as f:
-        content = f.read()
-    assert "\\n" in content
-    assert "\\t" in content
+def test_uses_a_tab_and_a_newline_escape():
+    run = run_student(3)
+    assert "\t" in run.output, "Step 2: use \\t somewhere in your output."
+    blank_lines = [ln for ln in run.output.split("\n") if not ln.strip()]
+    assert blank_lines, "Step 2: use \\n to create a blank line in your output."
 
 
-def test_is_valid_python():
-    with open("lessons/03_printing.py", "r") as f:
-        content = f.read()
-    try:
-        compile(content, "lessons/03_printing.py", "exec")
-    except SyntaxError as e:
-        raise AssertionError(f"Invalid Python syntax: {e}")
+def test_prints_hero_stats_on_one_line():
+    run = run_student(3)
+    lines = [ln for ln in run.output.splitlines() if ln.strip()]
+    assert any(
+        sum(ch.isdigit() for ch in ln) >= 2 for ln in lines
+    ), "Step 3: print the hero name, health and gold together on one line."
